@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-02-13 11:06:52
- * @LastEditTime: 2022-04-25 17:35:48
+ * @LastEditTime: 2022-04-26 16:24:54
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \test-vue3\src\views\About.vue
@@ -9,24 +9,37 @@
 <template>
   <el-container>
     <el-header>
-      <div class="left">欢迎{{ userName }}访问后台管理系统</div>
-      <div @click="dialogVisible = true" class="right">退出</div>
+      <div class="left">
+        <img src="/static/img/yarward.png" alt="" />
+      </div>
+      <div class="right">
+        <img src="/static/img/noUser.png" alt="" />
+        <div class="userName">
+          <div>你好，{{ userName }}</div>
+          <div>急诊科病房</div>
+        </div>
+        <div @click="dialogVisible = true">退出</div>
+      </div>
     </el-header>
     <el-container>
       <el-aside width="200px">
-        <el-menu
-          active-text-color="#ffd04b"
-          background-color="#545c64"
-          class="el-menu-vertical-demo"
-          default-active="helloword"
-          text-color="#fff"
-          router
-        >
-          <el-menu-item index="helloword">
-            <el-icon><location /></el-icon>
-            <span>第一个菜单</span>
-          </el-menu-item>
-        </el-menu>
+        <div class="passport_first_menu">
+          <div
+            class="passport_first_nav"
+            v-for="(item, index) in authorityList"
+            :key="index"
+          >
+            <img
+              style="padding: 5px 0"
+              v-if="item.authorityName === '消息'"
+              src="/static/img/menu.png"
+              alt=""
+            />
+            <img v-else :src="item.icon" alt="" />
+            {{ item.authorityName }}
+          </div>
+        </div>
+        <div class="passport_second_menu"></div>
       </el-aside>
       <el-main>
         <router-view />
@@ -44,36 +57,28 @@
   </el-container>
 </template>
 
-<script>
-import { Location } from "@element-plus/icons-vue";
+<script setup>
 import router from "@/router";
 import { loginApi } from "@/api/index.js";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 // import { ElMessageBox } from "element-plus";
-export default {
-  // elemen-plus使用的图标需要同组件一样注册
-  components: {
-    Location,
-  },
-  setup() {
-    // 获取路由传参
-    const userName = router.currentRoute.value.query.userName;
-    let dialogVisible = ref(false);
+// 获取路由传参
+const userName = router.currentRoute.value.query.userName;
+let dialogVisible = ref(false);
+const authorityList = ref([]);
 
-    const logout = () => {
-      loginApi.logout().then((res) => {
-        console.log(res);
-        dialogVisible.value = false;
-        router.push({ path: "/" });
-      });
-    };
+onMounted(() => {
+  authorityList.value = JSON.parse(
+    window.localStorage.getItem("authorityList")
+  );
+});
 
-    return {
-      userName,
-      dialogVisible,
-      logout,
-    };
-  },
+const logout = () => {
+  loginApi.logout().then((res) => {
+    console.log(res);
+    dialogVisible.value = false;
+    router.push({ path: "/" });
+  });
 };
 </script>
 
@@ -86,25 +91,67 @@ export default {
     background-color: white;
     color: black;
     text-align: left;
-    line-height: 60px;
   }
   .el-header {
-    border-bottom: 1px solid #e6e6e6;
+    box-shadow: 5px 2px 10px #ccc;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding-left: 0;
+    padding-right: 20px;
   }
   .el-aside {
     color: white;
     text-align: center;
-    line-height: 200px;
     height: 100%;
+    border-right: 1px solid #e6e6e6;
   }
   .el-menu-vertical-demo {
     height: 100%;
   }
   .el-main {
     padding: 30px;
+  }
+}
+.left {
+  width: 60px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  background-color: #1e87f0;
+  img {
+    width: 56px;
+    height: 15px;
+  }
+}
+.right {
+  display: flex;
+  align-items: center;
+  img {
+    width: 30px;
+    height: 30px;
+  }
+  .userName {
+    padding: 0 20px;
+  }
+}
+.passport_first_menu {
+  width: 60px;
+  height: 100%;
+  background-color: #1e87f0;
+  .passport_first_nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 62px;
+    font-size: 14px;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    img {
+      max-width: 32px;
+      max-height: 32px;
+    }
   }
 }
 </style>

@@ -96,9 +96,15 @@ const login = () => {
       chooseDialog.value = true;
       getLandingEndId();
       getDeptId();
-      window.localStorage.setItem("token", res.data.data.token);
-      window.localStorage.setItem("empInfo", res.data.data.empInfo);
-      window.localStorage.setItem("orgInfo", res.data.data.orgInfo);
+      window.localStorage.setItem("token", JSON.stringify(res.data.data.token));
+      window.localStorage.setItem(
+        "empInfo",
+        JSON.stringify(res.data.data.empInfo)
+      );
+      window.localStorage.setItem(
+        "orgInfo",
+        JSON.stringify(res.data.data.orgInfo)
+      );
     } else {
       ElMessage.error(res.data.desc);
     }
@@ -146,6 +152,7 @@ const selectDept = () => {
 const getAuth = () => {
   loginApi.getAuth(LandingEndId.value).then((res) => {
     console.log(res, "获取菜单");
+    window.localStorage.setItem("authorityList", JSON.stringify(res.data.data));
   });
 };
 
