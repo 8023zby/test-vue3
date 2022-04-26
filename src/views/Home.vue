@@ -1,26 +1,43 @@
 <template>
-  <div class="home">
-    <div class="div">
-      <span>用户名：</span>
-      <el-input
-        style="width: 300px"
-        v-model="account.loginName"
-        placeholder="请输入账号"
-      ></el-input>
-    </div>
+  <el-container>
+    <el-header>
+      <img src="/static/img/tit_yarward.png" alt="" />
+      <div class="passport-login-tit">亚华云枢医院服务交互系统</div>
+    </el-header>
+    <el-main>
+      <div class="home">
+        <div>
+          <img src="/static/img/leftImg.png" alt="" />
+        </div>
+        <div class="user">
+          <div class="title">账号密码登录</div>
+          <div class="div">
+            <el-input
+              :prefix-icon="Avatar"
+              style="width: 400px"
+              v-model="account.loginName"
+              placeholder="请输入用户名"
+            ></el-input>
+          </div>
 
-    <div class="div">
-      <span>密码：</span>
-      <el-input
-        style="width: 300px"
-        v-model="account.loginPassword"
-        placeholder="请输入账号"
-      ></el-input>
-    </div>
-    <div class="div">
-      <el-button @click="login" type="primary">登录</el-button>
-    </div>
-
+          <div class="div">
+            <el-input
+              :prefix-icon="BellFilled"
+              style="width: 400px"
+              v-model="account.loginPassword"
+              type="password"
+              placeholder="请输入密码"
+            ></el-input>
+          </div>
+          <div class="div">
+            <el-button class="primary" @click="login" type="primary"
+              >登录</el-button
+            >
+          </div>
+        </div>
+      </div>
+    </el-main>
+    <el-footer style="60px"></el-footer>
     <!-- 选择终端弹窗 -->
     <el-dialog v-model="chooseDialog" title="请选择" width="30%">
       <el-form>
@@ -63,7 +80,7 @@
         </span>
       </template>
     </el-dialog>
-  </div>
+  </el-container>
 </template>
 
 <script setup>
@@ -72,6 +89,7 @@ import { reactive, ref } from "vue";
 import router from "../router";
 import { loginApi } from "@/api/index.js";
 import { ElMessage } from "element-plus";
+import { Avatar, BellFilled } from "@element-plus/icons-vue";
 
 const account = reactive({
   loginName: "",
@@ -169,21 +187,67 @@ const checkDeptLanding = () => {
 </script>
 
 <style scoped lang="scss">
-.home {
-  display: flex;
-  flex-flow: column;
-  align-items: center;
-  justify-content: center;
+.el-container {
   width: 100%;
   height: 100%;
-  background: url("../assets/home.jpg") 100% 100% no-repeat;
+}
+.el-main,
+.el-footer {
+  widows: 100%;
+  padding: 0;
+}
+.el-main {
+  background: #1e87f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.el-header {
+  height: 80px;
+  display: flex;
+  align-items: center;
+  img {
+    height: 40px;
+  }
+  .passport-login-tit {
+    margin-left: 20px;
+    font-size: 24px;
+    color: #333;
+  }
+}
+.home {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1170px;
+  height: 560px;
   .div {
     margin: 10px 0;
     text-align: left;
-    span {
-      display: inline-block;
-      width: 70px;
-    }
+    height: 100px;
   }
+}
+.user {
+  height: calc(100% - 60px);
+  width: 410px;
+  background: #fff;
+  padding: 30px;
+}
+.title {
+  font-size: 24px;
+  color: #333;
+  height: 80px;
+  line-height: 100px;
+}
+/deep/.el-input__inner {
+  height: 50px;
+  line-height: 50px;
+}
+.el-button--primary {
+  width: 100%;
+  height: 50px;
+  font-size: 22px;
+  margin-top: 20px;
+  background: #1e87f0;
 }
 </style>
