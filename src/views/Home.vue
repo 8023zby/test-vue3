@@ -39,7 +39,7 @@
     </el-main>
     <el-footer style="60px"></el-footer>
     <!-- 选择终端弹窗 -->
-    <el-dialog v-model="chooseDialog" title="请选择" width="30%">
+    <el-dialog v-model="chooseDialog" title="请选择">
       <el-form>
         <el-form-item label="登录应用" :label-width="formLabelWidth">
           <el-select v-model="LandingEndId" placeholder="请选择">
@@ -122,6 +122,10 @@ const login = () => {
       window.localStorage.setItem(
         "orgInfo",
         JSON.stringify(res.data.data.orgInfo)
+      );
+      window.localStorage.setItem(
+        "deptInfo",
+        JSON.stringify(res.data.data.deptInfo)
       );
     } else {
       ElMessage.error(res.data.desc);
@@ -226,6 +230,13 @@ const checkDeptLanding = () => {
     text-align: left;
     height: 100px;
   }
+  .el-button--primary {
+    width: 100%;
+    height: 50px;
+    font-size: 22px;
+    margin-top: 20px;
+    background: #1e87f0;
+  }
 }
 .user {
   height: calc(100% - 60px);
@@ -243,11 +254,10 @@ const checkDeptLanding = () => {
   height: 50px;
   line-height: 50px;
 }
-.el-button--primary {
+/deep/.el-dialog {
+  width: 490px;
+}
+.el-select {
   width: 100%;
-  height: 50px;
-  font-size: 22px;
-  margin-top: 20px;
-  background: #1e87f0;
 }
 </style>

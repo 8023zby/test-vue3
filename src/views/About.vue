@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-02-13 11:06:52
- * @LastEditTime: 2022-04-26 16:24:54
+ * @LastEditTime: 2022-04-27 17:44:57
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \test-vue3\src\views\About.vue
@@ -16,7 +16,7 @@
         <img src="/static/img/noUser.png" alt="" />
         <div class="userName">
           <div>你好，{{ userName }}</div>
-          <div>急诊科病房</div>
+          <div>{{ deptInfo.deptName }}</div>
         </div>
         <div @click="dialogVisible = true">退出</div>
       </div>
@@ -26,6 +26,7 @@
         <div class="passport_first_menu">
           <div
             class="passport_first_nav"
+            :class="{'passport_selected': ''}"
             v-for="(item, index) in authorityList"
             :key="index"
           >
@@ -66,6 +67,7 @@ import { ref, onMounted } from "vue";
 const userName = router.currentRoute.value.query.userName;
 let dialogVisible = ref(false);
 const authorityList = ref([]);
+const deptInfo = JSON.parse(window.localStorage.getItem("deptInfo"));
 
 onMounted(() => {
   authorityList.value = JSON.parse(
