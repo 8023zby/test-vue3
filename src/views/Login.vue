@@ -22,7 +22,7 @@
 
           <div class="div">
             <el-input
-              :prefix-icon="BellFilled"
+              :prefix-icon="Unlock"
               style="width: 400px"
               v-model="account.loginPassword"
               type="password"
@@ -89,7 +89,7 @@ import { reactive, ref } from "vue";
 import router from "../router";
 import { loginApi } from "@/api/index.js";
 import { ElMessage } from "element-plus";
-import { Avatar, BellFilled } from "@element-plus/icons-vue";
+import { Avatar, Unlock } from "@element-plus/icons-vue";
 
 const account = reactive({
   loginName: "",
@@ -127,6 +127,10 @@ const login = () => {
         "deptInfo",
         JSON.stringify(res.data.data.deptInfo)
       );
+      window.localStorage.setItem(
+        "dataDeptInfoList",
+        JSON.stringify(res.data.data.dataDeptInfoList)
+      );
     } else {
       ElMessage.error(res.data.desc);
     }
@@ -147,6 +151,7 @@ const getDeptId = () => {
   loginApi.getDeptId().then((res) => {
     if (res.data.status === 200) {
       deptId.value = res.data.data;
+      saveDeptId(res.data.data);
     } else {
       ElMessage.error(res.data.desc);
     }
@@ -157,10 +162,7 @@ const confirm = () => {
   selectDept();
   getAuth();
   checkDeptLanding();
-  router.push({
-    path: "/about",
-    query: { userName: userInfo.value.empInfo.empName },
-  });
+  router.push({ path: "/about" });
 };
 
 const selectDept = () => {
@@ -187,6 +189,22 @@ const checkDeptLanding = () => {
   loginApi.checkDeptLanding(params).then((res) => {
     console.log(res, "checkDeptLanding");
   });
+};
+
+// 存储deptId与选择的科室信息
+const saveDeptId = (deptId) => {
+  window.localStorage.setItem("selectDeptId", JSON.stringify(deptId));
+  const dataDeptInfoList = JSON.parse(
+    window.localStorage.getItem("dataDeptInfoList")
+  );
+  for (let index = 0; index < dataDeptInfoList.length; index++) {
+    if (dataDeptInfoList[index].deptId === deptId) {
+      window.localStorage.setItem(
+        "selectDeptInfo",
+        JSON.stringify(dataDeptInfoList[index])
+      );
+    }
+  }
 };
 </script>
 

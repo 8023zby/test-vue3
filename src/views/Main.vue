@@ -1,8 +1,8 @@
 <!--
  * @Author: your name
  * @Date: 2022-02-13 11:06:52
- * @LastEditTime: 2022-04-27 17:44:57
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2022-05-10 13:49:32
+ * @LastEditors: zhangbinyan 1733674157@qq.com
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \test-vue3\src\views\About.vue
 -->
@@ -12,13 +12,37 @@
       <div class="left">
         <img src="/static/img/yarward.png" alt="" />
       </div>
+      <div>
+        <el-select
+          v-model="selectDeptInfo.deptId"
+          @change="changeDept"
+          placeholder="请选择"
+        >
+          <el-option
+            v-for="item in dataDeptInfoList"
+            :key="item.deptId"
+            :value="item.deptId"
+            :label="item.deptName"
+          >
+          </el-option>
+        </el-select>
+      </div>
       <div class="right">
         <img src="/static/img/noUser.png" alt="" />
         <div class="userName">
-          <div>你好，{{ userName }}</div>
-          <div>{{ deptInfo.deptName }}</div>
+          <div style="color: #333">你好，{{ empInfo.empName }}</div>
+          <div style="color: #999">{{ deptInfo.deptName }}</div>
         </div>
-        <div @click="dialogVisible = true">退出</div>
+        <div style="cursor: pointer">
+          <el-icon color="#409EFC"
+            ><Lock style="margin-right: 8px; height: 1.3em; width: 1.3em"
+          /></el-icon>
+        </div>
+        <div @click="dialogVisible = true" style="cursor: pointer">
+          <el-icon color="#409EFC"
+            ><SwitchButton style="height: 1.3em; width: 1.3em"
+          /></el-icon>
+        </div>
       </div>
     </el-header>
     <el-container>
@@ -26,7 +50,7 @@
         <div class="passport_first_menu">
           <div
             class="passport_first_nav"
-            :class="{'passport_selected': ''}"
+            :class="{ passport_selected: '' }"
             v-for="(item, index) in authorityList"
             :key="index"
           >
@@ -62,12 +86,25 @@
 import router from "@/router";
 import { loginApi } from "@/api/index.js";
 import { ref, onMounted } from "vue";
-// import { ElMessageBox } from "element-plus";
-// 获取路由传参
-const userName = router.currentRoute.value.query.userName;
+import { ElMessage } from "element-plus";
+
+import { Lock, SwitchButton } from "@element-plus/icons-vue";
+
 let dialogVisible = ref(false);
+
 const authorityList = ref([]);
+
+const empInfo = JSON.parse(window.localStorage.getItem("empInfo"));
+
 const deptInfo = JSON.parse(window.localStorage.getItem("deptInfo"));
+
+const dataDeptInfoList = JSON.parse(
+  window.localStorage.getItem("dataDeptInfoList")
+);
+
+const selectDeptInfo = JSON.parse(
+  window.localStorage.getItem("selectDeptInfo")
+);
 
 onMounted(() => {
   authorityList.value = JSON.parse(
@@ -79,8 +116,30 @@ const logout = () => {
   loginApi.logout().then((res) => {
     console.log(res);
     dialogVisible.value = false;
+    ElMessage.success("注销成功");
     router.push({ path: "/" });
   });
+};
+
+// 切换科室
+const changeDept = (value) => {
+  saveDeptId(value);
+};
+
+// 存储deptId与选择的科室信息
+const saveDeptId = (deptId) => {
+  window.localStorage.setItem("selectDeptId", JSON.stringify(deptId));
+  const dataDeptInfoList = JSON.parse(
+    window.localStorage.getItem("dataDeptInfoList")
+  );
+  for (let index = 0; index < dataDeptInfoList.length; index++) {
+    if (dataDeptInfoList[index].deptId === deptId) {
+      window.localStorage.setItem(
+        "selectDeptInfo",
+        JSON.stringify(dataDeptInfoList[index])
+      );
+    }
+  }
 };
 </script>
 
@@ -154,6 +213,14 @@ const logout = () => {
       max-width: 32px;
       max-height: 32px;
     }
+  }
+}
+.el-icon {
+  width: 2em;
+}
+/deep/.el-select {
+  .el-input__inner {
+    border: none;
   }
 }
 </style>
