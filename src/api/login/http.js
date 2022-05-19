@@ -1,8 +1,8 @@
 /*
  * @Author: your name
  * @Date: 2022-02-22 16:48:39
- * @LastEditTime: 2022-02-22 17:33:38
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2022-05-18 17:06:20
+ * @LastEditors: zhangbinyan 1733674157@qq.com
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \test-vue3\src\api\http.js
  */
@@ -84,6 +84,22 @@ export const _post = (req) => {
       },
     ],
     method: "post",
+    url: `${req.url}`,
+    data: req.data,
+  });
+};
+
+export const _put = (req) => {
+  return axios({
+    headers: {
+      "Content-Type": "application/json",
+    },
+    transformRequest: [
+      (data) => {
+        return JSON.stringify(data);
+      },
+    ],
+    method: "put",
     url: `${req.url}`,
     data: req.data,
   });

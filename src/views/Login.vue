@@ -87,7 +87,7 @@
 // 组合式 API 的核心思想是直接在函数作用域内定义响应式状态变量，并将从多个函数中得到的状态组合起来处理复杂问题
 import { reactive, ref } from "vue";
 import router from "../router";
-import { loginApi } from "@/api/index.js";
+import { loginApi } from "@/api/login/index.js";
 import { ElMessage } from "element-plus";
 import { Avatar, Unlock } from "@element-plus/icons-vue";
 
@@ -162,7 +162,7 @@ const confirm = () => {
   selectDept();
   getAuth();
   checkDeptLanding();
-  router.push({ path: "/about" });
+  router.push({ path: "/passport_menu" });
 };
 
 const selectDept = () => {
@@ -193,7 +193,7 @@ const checkDeptLanding = () => {
 
 // 存储deptId与选择的科室信息
 const saveDeptId = (deptId) => {
-  window.localStorage.setItem("selectDeptId", JSON.stringify(deptId));
+  window.localStorage.setItem("selectDeptId", deptId);
   const dataDeptInfoList = JSON.parse(
     window.localStorage.getItem("dataDeptInfoList")
   );
