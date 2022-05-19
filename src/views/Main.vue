@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-02-13 11:06:52
- * @LastEditTime: 2022-05-18 17:30:01
+ * @LastEditTime: 2022-05-19 17:28:44
  * @LastEditors: zhangbinyan 1733674157@qq.com
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \test-vue3\src\views\About.vue
@@ -48,27 +48,77 @@
     <el-container>
       <el-aside width="200px">
         <div class="passport_first_menu">
-          <div
-            class="passport_first_nav"
-            :class="{ passport_selected: '' }"
-            v-for="(item, index) in authorityList"
-            :key="index"
-          >
-            <img
-              style="padding: 5px 0"
-              v-if="item.authorityName === '消息'"
-              src="/static/img/menu.png"
-              alt=""
-            />
-            <img v-else :src="item.icon" alt="" />
-            {{ item.authorityName }}
+          <div class="passport-first-div">
+            <!-- <vue3SeamlessScroll :ops="ops" style="height: 100%"> -->
+            <FirstMenu
+              :authorityTree="authorityList"
+              @secondClick="secondClick"
+              ref="nav_menu"
+            ></FirstMenu>
+            <!-- </vue3SeamlessScroll> -->
           </div>
         </div>
-        <div class="passport_second_menu"></div>
+        <div class="passport_second_menu">
+          <secondMenu
+            v-if="secondShow"
+            :authorityTree="authorityList"
+            :defaultActive="defaultActive"
+            :dataKey="dataKey"
+            :firstName="firstName"
+            @checkMenu="checkMenu"
+          ></secondMenu>
+        </div>
       </el-aside>
-      <el-main>
-        <router-view />
-      </el-main>
+      <el-container>
+        <el-footer>
+          <div class="passport_main_router_left"></div>
+          <div class="passport_main_router_right" v-if="welcomeFlag">
+            <i class="upbsFont iconweizhidian passport-router"></i>
+            <span
+              >&nbsp;&nbsp;&emsp;{{
+                menuSelected.selectedMenu.secondMenu
+              }}</span
+            >
+            <span style="font-size: 18px">&nbsp;>&nbsp;</span>
+            <span style="color: #333333">{{
+              menuSelected.selectedMenu.thirdMenu
+            }}</span>
+          </div>
+          <div class="passport_main_router_right" v-else>
+            <i class="upbsFont iconweizhidian passport-router"></i>
+            <span
+              >&nbsp;&nbsp;&emsp;{{ menuSelected.selectedMenu.firstMenu }}</span
+            >
+            <span style="font-size: 18px">&nbsp;>&nbsp;</span>
+            <span v-if="menuSelected.selectedMenu.secondMenu !== ''"
+              >&nbsp;{{ menuSelected.selectedMenu.secondMenu }}</span
+            >
+            <span
+              v-if="menuSelected.selectedMenu.secondMenu !== ''"
+              style="font-size: 18px"
+              >&nbsp;>&nbsp;</span
+            >
+            <span style="color: #333333">{{
+              menuSelected.selectedMenu.thirdMenu
+            }}</span>
+          </div>
+        </el-footer>
+        <el-main v-if="welcomeFlag" class="passport_welcome">
+          <img
+            :src="'/static/img/welcome_org.jpg'"
+            onerror="javascript:this.src='/static/img/welcome_org.jpg';"
+          />
+        </el-main>
+        <el-main
+          :class="{ 'passport-full-screen': $route.meta.isFullScreen }"
+          :style="IEStyle"
+          v-if="!welcomeFlag"
+        >
+          <div class="passport_view">
+            <router-view v-if="isRouterAlive" />
+          </div>
+        </el-main>
+      </el-container>
     </el-container>
     <el-dialog v-model="dialogVisible" title="提示" width="30%">
       <span>确定注销吗？</span>
@@ -124,9 +174,11 @@
 <script setup>
 import router from "@/router";
 import { loginApi } from "@/api/login/index.js";
-import { ref, onMounted, reactive } from "vue";
+import { ref, reactive, onMounted, nextTick } from "vue";
 import { ElMessage } from "element-plus";
 import { Lock, SwitchButton } from "@element-plus/icons-vue";
+import FirstMenu from "./MenuFirst.vue";
+import secondMenu from "./Menu.vue";
 
 let dialogVisible = ref(false);
 let passVis = ref(false);
@@ -136,12 +188,29 @@ const ruleFormRef = ref();
 let selectDeptId = ref("");
 
 const authorityList = ref([]);
+authorityList.value = JSON.parse(localStorage.getItem("authorityList"));
+
+let dataKey = ref(0);
+let secondShow = ref(true);
+let firstName = ref("");
+let defaultActive = ref("");
+let welcomeFlag = ref(true);
 
 const modifyPassForm = reactive({
   oldPass: "",
   userPassword: "",
   checkPass: "",
 });
+
+const menuSelected = reactive({
+  mainShow: false,
+  selectedMenu: {
+    firstMenu: "",
+    secondMenu: "首页",
+    thirdMenu: "欢迎页",
+  },
+});
+const isRouterAlive = ref(false);
 
 const rules = reactive({
   oldPass: [
@@ -167,7 +236,13 @@ const dataDeptInfoList = JSON.parse(localStorage.getItem("dataDeptInfoList"));
 selectDeptId.value = localStorage.getItem("selectDeptId");
 
 onMounted(() => {
-  authorityList.value = JSON.parse(localStorage.getItem("authorityList"));
+  // let path = router.currentRoute.value.path;
+  // 控制欢迎页显示
+  // if (path !== "/main") {
+  //   welcomeFlag.value = false;
+  // } else {
+  //   welcomeFlag.value = true;
+  // }
 });
 
 const logout = () => {
@@ -217,7 +292,6 @@ const changePass = () => {
     newPwd: modifyPassForm.userPassword,
   };
   loginApi.changePassword(params).then((res) => {
-    console.log(res, 'pppppp')
     if (res.data.status === 200) {
       ElMessage({
         message: "修改密码成功,请重新登录！",
@@ -233,6 +307,73 @@ const changePass = () => {
       });
     }
   });
+};
+
+const secondClick = (key, isReload = true) => {
+  if (key === dataKey.value) return false;
+  secondShow.value = false;
+  nextTick(() => {
+    secondShow.value = true;
+  });
+  dataKey.value = key;
+  console.log(authorityList.value, key, "////////////");
+  firstName.value = authorityList.value[key].authorityName || "";
+  // 刷新页面不需要再进行选中第一个菜单操作
+  if (!isReload) {
+    // 1.7需求 点击一级菜单默认选中二级或三级第一个
+    let menuData = authorityList.value[key].child;
+    let toRouter = "";
+    let curName = "";
+    let pName = "";
+    if (menuData.length > 0) {
+      let thirdData = menuData[0].child;
+      if (thirdData.length === 0) {
+        curName = menuData[0].authorityName;
+        toRouter = menuData[0].pageUrl;
+      } else {
+        pName = menuData[0].authorityName;
+        curName = thirdData[0].authorityName;
+        toRouter = thirdData[0].pageUrl;
+      }
+      checkMenu(toRouter, curName, pName, "", firstName, {}, "fresh");
+    }
+  }
+};
+
+// 点击菜单
+const checkMenu = (
+  key,
+  curName,
+  pName,
+  realKey = "",
+  fName = "",
+  toQuery = {},
+  isReload = ""
+) => {
+  welcomeFlag.value = false;
+  menuSelected.mainShow = true;
+  menuSelected.selectedMenu.firstMenu = fName;
+  menuSelected.selectedMenu.secondMenu = pName;
+  menuSelected.selectedMenu.thirdMenu = curName;
+  firstName.value = fName;
+  defaultActive.value = key;
+  if (isReload === "fresh") {
+    if (realKey === "") {
+      router.push({ path: `${key}`, query: toQuery });
+    } else {
+      router.push({ path: `${realKey}`, query: toQuery });
+    }
+  } else {
+    isRouterAlive.value = false;
+    if (realKey === "") {
+      router.push({ path: `${key}`, query: toQuery });
+    } else {
+      router.push({ path: `${realKey}`, query: toQuery });
+    }
+    setTimeout(() => {
+      isRouterAlive.value = true;
+    }, 200);
+  }
 };
 </script>
 
@@ -253,18 +394,34 @@ const changePass = () => {
     justify-content: space-between;
     padding-left: 0;
     padding-right: 20px;
+    z-index: 1;
   }
   .el-aside {
     color: white;
     text-align: center;
     height: 100%;
     border-right: 1px solid #e6e6e6;
+    color: #ffffff;
+    text-align: left;
+    overflow: hidden;
+    width: 210px !important;
+    height: 100%;
+    display: flex;
+    border-right: 1px solid #cccccc;
   }
   .el-menu-vertical-demo {
     height: 100%;
   }
   .el-main {
     padding: 30px;
+  }
+  .el-footer {
+    padding: 0px !important;
+    height: 42px !important;
+    line-height: 40px;
+    border-bottom: 1px solid #ebeeed;
+    display: flex;
+    box-sizing: border-box;
   }
 }
 .left {
@@ -293,6 +450,7 @@ const changePass = () => {
   width: 60px;
   height: 100%;
   background-color: #1e87f0;
+  z-index: 2;
   .passport_first_nav {
     display: flex;
     flex-direction: column;
@@ -328,5 +486,39 @@ const changePass = () => {
 .el-select-dropdown__item /deep/ {
   font-size: 16px;
   font-weight: 500;
+}
+.passport_main_router_left {
+  width: 5px;
+  background: #1d87ef;
+}
+.passport_main_router_right {
+  padding-left: 10px;
+  color: #666666;
+  font-size: 14px;
+  position: relative;
+}
+.passport_main_router_right img {
+  position: absolute;
+  top: 14px;
+}
+.passport_first_menu {
+  width: 60px;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  flex: 0 0 auto;
+}
+.passport_second_menu {
+  width: 150px;
+  height: 100%;
+  padding-top: 4px;
+}
+.passport_welcome {
+  padding: 0px !important;
+  overflow: hidden;
+  img {
+    width: 100%;
+    height: 100%;
+  }
 }
 </style>
