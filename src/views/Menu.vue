@@ -11,7 +11,6 @@
     @checkMenu="checkMenu"
   >
     <menu-tree
-      :menuNum="menuNum"
       v-for="(item, index) in secondMenuData"
       :key="index"
       :menuData="item"
@@ -37,19 +36,22 @@ const opened = ref([]);
 const tempObj = reactive({});
 const selectedKey = ref("");
 
-watch(props.dataKey, () => {
-  secondMenuData.value = props.authorityTree[props.dataKey].child;
-  secondMenuData.value.forEach((item) => {
-    opened.value.push(item.authorityId);
-  });
-});
+watch(
+  () => props.dataKey,
+  () => {
+    secondMenuData.value = props.authorityTree[props.dataKey].child;
+    secondMenuData.value.forEach((item) => {
+      opened.value.push(item.authorityId);
+    });
+  }
+);
 
 const a = () => {
   secondMenuData.value = props.authorityTree[props.dataKey].child;
   secondMenuData.value.forEach((item) => {
     opened.value.push(item.authorityId);
   });
-  console.log(secondMenuData.value, "mmmmmmmmmm")
+  console.log(secondMenuData.value, "mmmmmmmmmm");
 };
 
 a();

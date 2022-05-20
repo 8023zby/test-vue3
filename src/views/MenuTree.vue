@@ -55,38 +55,12 @@ console.log(props.selectedKey, "pp")
 
 // flag.value = props.selectedKey;
 
-watch(props.selectedKey, () => {
-  flag.value = props.selectedKey;
-});
-// export default {
-//   name: "menu-tree",
-//   props: {
-//     menuData: {
-//       type: Object,
-//       required: true,
-//     },
-//     selectedKey: {
-//       type: String,
-//     },
-//     firstName: {
-//       type: String,
-//       required: true,
-//     }
-//   },
-//   data() {
-//     return {
-//       flag: "",
-//     };
-//   },
-//   watch: {
-//     selectedKey() {
-//       this.flag = this.selectedKey;
-//     },
-//   },
-//   created() {
-//     this.flag = this.selectedKey;
-//   },
-// };
+watch(
+  () => props.selectedKey,
+  () => {
+    flag.value = props.selectedKey;
+  }
+);
 </script>
 
 <style lang="scss">
