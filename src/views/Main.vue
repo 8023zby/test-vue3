@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-02-13 11:06:52
- * @LastEditTime: 2022-05-19 17:28:44
+ * @LastEditTime: 2022-05-20 16:50:23
  * @LastEditors: zhangbinyan 1733674157@qq.com
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \test-vue3\src\views\About.vue
@@ -210,7 +210,7 @@ const menuSelected = reactive({
     thirdMenu: "欢迎页",
   },
 });
-const isRouterAlive = ref(false);
+const isRouterAlive = ref(true);
 
 const rules = reactive({
   oldPass: [
@@ -316,7 +316,6 @@ const secondClick = (key, isReload = true) => {
     secondShow.value = true;
   });
   dataKey.value = key;
-  console.log(authorityList.value, key, "////////////");
   firstName.value = authorityList.value[key].authorityName || "";
   // 刷新页面不需要再进行选中第一个菜单操作
   if (!isReload) {
@@ -335,7 +334,7 @@ const secondClick = (key, isReload = true) => {
         curName = thirdData[0].authorityName;
         toRouter = thirdData[0].pageUrl;
       }
-      checkMenu(toRouter, curName, pName, "", firstName, {}, "fresh");
+      checkMenu(toRouter, curName, pName, "", firstName.value, {}, "fresh");
     }
   }
 };
@@ -355,6 +354,7 @@ const checkMenu = (
   menuSelected.selectedMenu.firstMenu = fName;
   menuSelected.selectedMenu.secondMenu = pName;
   menuSelected.selectedMenu.thirdMenu = curName;
+  console.log(menuSelected, "ppppppp")
   firstName.value = fName;
   defaultActive.value = key;
   if (isReload === "fresh") {

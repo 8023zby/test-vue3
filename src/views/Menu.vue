@@ -46,15 +46,13 @@ watch(
   }
 );
 
-const a = () => {
+const showMenu = () => {
   secondMenuData.value = props.authorityTree[props.dataKey].child;
   secondMenuData.value.forEach((item) => {
     opened.value.push(item.authorityId);
   });
-  console.log(secondMenuData.value, "mmmmmmmmmm");
 };
-
-a();
+showMenu();
 
 const openMenu = (key) => {
   tempObj[key] = key + "_open";

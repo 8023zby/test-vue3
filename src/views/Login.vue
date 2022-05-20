@@ -162,7 +162,7 @@ const confirm = () => {
   selectDept();
   getAuth();
   checkDeptLanding();
-  router.push({ path: "/passport_menu" });
+  router.push({ path: "/main" });
 };
 
 const selectDept = () => {

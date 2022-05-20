@@ -51,9 +51,10 @@ import { defineProps, watch, ref } from "vue";
 const props = defineProps(["menuData", "selectedKey", "firstName"]);
 let flag = ref("");
 
-console.log(props.selectedKey, "pp")
-
-// flag.value = props.selectedKey;
+const a = () => {
+  flag.value = props.selectedKey;
+};
+a();
 
 watch(
   () => props.selectedKey,
@@ -88,16 +89,16 @@ watch(
   .passport-second-menu:hover {
     background: #ecf5ff;
   }
-  .el-submenu__title {
+  .el-sub-menu__title {
     padding: 0 10px !important;
     height: 38px !important;
     line-height: 38px !important;
     color: #333333 !important;
   }
-  .el-submenu__icon-arrow {
-    display: none;
+  .el-sub-menu__icon-arrow {
+    // display: none;
   }
-  .el-submenu {
+  .el-sub-menu {
     background: #f7f7f7;
     .el-menu-item {
       height: 38px !important;
@@ -121,5 +122,21 @@ watch(
     color: #ffffff;
     pointer-events: none;
   }
+}
+
+.el-sub-menu {
+  background: #f7f7f7;
+  .el-menu-item {
+    height: 38px !important;
+    line-height: 38px !important;
+    padding-left: 30px !important;
+    min-width: 140px !important;
+  }
+}
+.el-sub-menu__title {
+  padding: 0 10px !important;
+  height: 38px !important;
+  line-height: 38px !important;
+  color: #333333 !important;
 }
 </style>
