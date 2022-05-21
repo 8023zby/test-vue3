@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2022-02-13 11:06:52
- * @LastEditTime: 2022-05-20 16:50:23
+ * @LastEditTime: 2022-05-21 11:34:54
  * @LastEditors: zhangbinyan 1733674157@qq.com
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \test-vue3\src\views\About.vue
@@ -12,6 +12,7 @@
       <div class="left">
         <img src="/static/img/yarward.png" alt="" />
       </div>
+      <div style="position: absolute; left: 80px">山东亚华电子股份有限公司</div>
       <div class="topDeptName">
         <el-select
           v-model="selectDeptId"
@@ -73,22 +74,22 @@
         <el-footer>
           <div class="passport_main_router_left"></div>
           <div class="passport_main_router_right" v-if="welcomeFlag">
-            <i class="upbsFont iconweizhidian passport-router"></i>
-            <span
-              >&nbsp;&nbsp;&emsp;{{
-                menuSelected.selectedMenu.secondMenu
-              }}</span
-            >
+            <LocationFilled
+              style="width: 1em; height: 1em; margin-right: 8px"
+              color="#1e87f0"
+            />
+            <span>{{ menuSelected.selectedMenu.secondMenu }}</span>
             <span style="font-size: 18px">&nbsp;>&nbsp;</span>
             <span style="color: #333333">{{
               menuSelected.selectedMenu.thirdMenu
             }}</span>
           </div>
           <div class="passport_main_router_right" v-else>
-            <i class="upbsFont iconweizhidian passport-router"></i>
-            <span
-              >&nbsp;&nbsp;&emsp;{{ menuSelected.selectedMenu.firstMenu }}</span
-            >
+            <LocationFilled
+              style="width: 1em; height: 1em; margin-right: 8px"
+              color="#1e87f0"
+            />
+            <span>{{ menuSelected.selectedMenu.firstMenu }}</span>
             <span style="font-size: 18px">&nbsp;>&nbsp;</span>
             <span v-if="menuSelected.selectedMenu.secondMenu !== ''"
               >&nbsp;{{ menuSelected.selectedMenu.secondMenu }}</span
@@ -176,7 +177,7 @@ import router from "@/router";
 import { loginApi } from "@/api/login/index.js";
 import { ref, reactive, onMounted, nextTick } from "vue";
 import { ElMessage } from "element-plus";
-import { Lock, SwitchButton } from "@element-plus/icons-vue";
+import { Lock, SwitchButton, LocationFilled } from "@element-plus/icons-vue";
 import FirstMenu from "./MenuFirst.vue";
 import secondMenu from "./Menu.vue";
 
@@ -354,7 +355,7 @@ const checkMenu = (
   menuSelected.selectedMenu.firstMenu = fName;
   menuSelected.selectedMenu.secondMenu = pName;
   menuSelected.selectedMenu.thirdMenu = curName;
-  console.log(menuSelected, "ppppppp")
+  console.log(menuSelected, "ppppppp");
   firstName.value = fName;
   defaultActive.value = key;
   if (isReload === "fresh") {
@@ -386,6 +387,10 @@ const checkMenu = (
     background-color: white;
     color: black;
     text-align: left;
+    color: #666;
+    line-height: 50px;
+    height: 50px !important;
+    font-size: 14px;
   }
   .el-header {
     box-shadow: 5px 2px 10px #ccc;
@@ -444,6 +449,10 @@ const checkMenu = (
   }
   .userName {
     padding: 0 20px;
+    line-height: 50px;
+    div {
+      line-height: 20px;
+    }
   }
 }
 .passport_first_menu {
